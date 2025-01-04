@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat App</title>
+    <script src="./scripts/dragAndDropHelper.js"></script>
+    <script src="./scripts/ModalDialog.js"></script>
+    <style>
+      .forms-container {
+        display: flex;
+      }
+      .file-input-container {
+        position: relative;
+        width: 30px;
+        height: 30px;
+      }
+      .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+      }
+      .upload-button {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 2px dashed #ccc;
+        border-radius: 50%;
+        font-size: 24px;
+        font-weight: bold;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Chat Room</h1>
+    <div
+      id="dropZone"
+      style="border: 2px dashed #ccc; padding: 20px; margin-bottom: 20px"
+    >
+      <ul id="messages">
+        <% messages.forEach(function(message) { %>
+        <li>
+          <% if (message.fileData) { %>
+          <img src="<%= message.fileData %>" style="max-width: 80px" />
+          <% } %> <% if (message.msg) { %>
+          <span> <%= message.msg %> </span>
+          <% } %>
+        </li>
+        <% }); %>
+      </ul>
+      <div class="forms-container">
+        <form
+          id="uploadForm"
+          action="/upload"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <div class="file-input-container">
+            <div class="upload-button">+</div>
+            <input
+              type="file"
+              id="fileInput"
+              name="file"
+              class="file-input"
+              accept="image/*"
+            />
+          </div>
+        </form>
+
+        <form id="form" action="">
+          <input id="input" autocomplete="off" /><button>Send</button>
+        </form>
+      </div>
+    </div>
+    <script type="module">
+      const ws = new WebSocket('ws://localhost:3000')
+
+      const form = document.getElementById('form')
+      const input = document.getElementById('input')
+      const messages = document.getElementById('messages')
+      const uploadForm = document.getElementById('uploadForm')
+      const fileInput = document.getElementById('fileInput')
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        if (input.value) {
+          ws.send(JSON.stringify({ msg: input.value }))
+          input.value = ''
+        }
+      })
+
+      fileInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0]
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader()
+          reader.onload = (e) => {
+            const fileContent = e.target.result
+            new ModalDialog(file, fileContent, (data) => {
+              ws.send(JSON.stringify(data))
+            })
+          }
+          reader.readAsDataURL(file)
+        } else {
+          console.error('Тільки файли зображень дозволені.')
+        }
+      })
+
+      ws.onmessage = (event) => {
+        const item = document.createElement('li')
+        const msgData = JSON.parse(event.data)
+        if (msgData.fileData) {
+          const img = document.createElement('img')
+          img.src = msgData.fileData
+          img.style.maxWidth = '80px'
+          item.append(img)
+        }
+        if (msgData.msg) {
+          const span = document.createElement('span')
+          span.textContent = msgData.msg
+          item.append(span)
+        }
+        messages.appendChild(item)
+      }
+
+      const dropZone = new DragAndDrop('dropZone', (filePath, fileContent) => {
+        new ModalDialog(filePath, fileContent, (data) => {
+          ws.send(JSON.stringify(data))
+        })
+      })
+    </script>
+  </body>
+</html>

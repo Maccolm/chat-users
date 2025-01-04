@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="../stylesheets/form.css">
+	<title><%= login ? 'Login' : 'Sign Up' %></title>
+</head>
+<body>
+	<h1 class="title-user"><%= login ? 'Login' : 'Register user' %></h1>
+    <div class="form-container">
+        <form id="user-form" action="<%= login ? '/auth/login' : '/auth/signup' %>" method="post" autocomplete="off">
+				<% if (!login) { %>
+					 <div class="form__section">
+						  <input
+								type="text"
+								id="name"
+								name="name"
+								placeholder="Name"
+								required
+						  />
+					 </div>
+				<% } %>
+            <div class="form__section">
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                />
+            </div>
+            <div class="form__section">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                />
+            </div>
+            <div class="form__section">
+            </div>
+				<div class="action__btns">
+					<button id="submitUserBtn" class="btn btn-auth" type="submit"><%= login ? 'Login' : 'Sign Up' %></button>
+					<a href="<%= login ? '/auth/signup' : '/auth/login' %>" class="btn btn-auth"><%= login ? 'Sign Up' : 'Login' %></a>
+				</div>
+        </form>
+		  <div id="error-container" class="error-message"></div>
+    </div>
+	 <script>
+		window.onload = function() {
+			const errorContainer = document.getElementById('error-container')
+			const error = '<%= error %>'
+			if (error) {
+				errorContainer.innerHTML = error
+				errorContainer.style.color = 'red'
+				errorContainer.style.marginTop = '10px'
+			}
+
+			const form = document.getElementById('signupForm');
+        
+        // Перевірка наявності заповнених полів
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const name = document.getElementById('name').value;
+
+                if (!email || !password || !name) {
+                    e.preventDefault() // Зупинити відправку форми
+                    alert('Please fill all fields before submitting!');
+                }
+            })
+        }
+		}
+	 </script>
+</body>
+</html>
