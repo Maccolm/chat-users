@@ -6,15 +6,21 @@
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+<<<<<<< HEAD
     "express-session": "^1.18.1",
+=======
+>>>>>>> d58aaa28b1aa515e803d342b917bf2bccb9d524e
     "html-pdf": "^3.0.1",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.5",
     "nodemailer": "^6.9.16",
+<<<<<<< HEAD
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
+=======
+>>>>>>> d58aaa28b1aa515e803d342b917bf2bccb9d524e
     "ws": "^8.18.0"
   }
 }

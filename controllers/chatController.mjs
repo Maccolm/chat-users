@@ -12,7 +12,6 @@ class ChatController {
     try {
       const [messages] = await db.execute('SELECT * FROM messages')
 		// check if user is logged in
-
 		console.log('user', req.user);
 		
       res.render('index', { messages, hideTools: false, user: req.user })

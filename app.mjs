@@ -20,7 +20,6 @@ app.use(cors())
 app.use(express.static('public'))
 app.use(bodyParser.json())
 
-
 const server = http.createServer(app)
 const wss = new WebSocketServer({ server })
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .form-container {
 	padding-top: 15px;
 	max-width: 350px;
@@ -63,3 +64,70 @@ ul{
 .title-user{
 	text-align: center;
 }
+=======
+.form-container {
+	padding-top: 15px;
+	max-width: 350px;
+	margin: auto;
+}
+.form {
+	width: 100%;
+}
+.form__section {
+	margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+} 
+.form__section input, select {
+	outline: none;
+	transition: all 0.3s ease 0s;
+	padding: 10px;
+	background-color: #ffffff;
+	border: none;
+	border-bottom: 1px solid #000;
+}
+.form__section input:hover {
+	background-color: #ffe5e5;
+}
+.form__section input:focus {
+	background-color: #e6e0e0e8;
+}
+ul{
+	padding: 0;
+}
+.error__msg{
+	margin-bottom: 5px;
+	list-style-type: none;
+	color: red;
+}
+.error__msg::before{
+	content: "–";
+	padding-right: 5px;
+}
+.btn {
+	background-color: transparent;
+	padding: 5px 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	text-decoration: none;
+	color: #333;
+	transition: all 0.3s;
+}
+.btn-auth {
+	text-align: center;
+	flex: 1 1 45%;
+}
+.btn:hover {
+	cursor: pointer;
+	background-color: #dccccc;
+}
+.action__btns{
+	display: flex;
+	justify-content: space-between;
+	gap: 15px;
+}
+.title-user{
+	text-align: center;
+}
+>>>>>>> d58aaa28b1aa515e803d342b917bf2bccb9d524e
