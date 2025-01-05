@@ -10,7 +10,8 @@ async function connectToMySQL() {
       user: config.db.mysql.user,
       password: config.db.mysql.password,
       database: config.db.mysql.database,
-    })
+		port: config.db.mysql.port
+	 })
     console.log('Успішно підключено до MySQL')
     return pool
   } catch (err) {
