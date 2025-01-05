@@ -14,7 +14,12 @@ class ChatController {
 		// check if user is logged in
 		console.log('user', req.user);
 		
-      res.render('index', { messages, hideTools: false, user: req.user })
+		for (let message of messages) {
+			const [user] = await db.execute('SELECT name FROM users WHERE id = ?', [message.userID])
+			message.userName = user.length > 0 ? user[0].name : 'Unknown'
+		}
+
+      res.render('index', { messages, hideTools: false, user: req.user})
     } catch (err) {
       console.error('Database error:', err)
       res.status(500).send('Database error')
@@ -23,7 +28,7 @@ class ChatController {
 
   static async saveMessage(messageDataObj) {
     try {
-      await db.execute('INSERT INTO messages (userID, msg, fileData) VALUES (?, ?)', [
+      await db.execute('INSERT INTO messages (userID, msg, fileData) VALUES (?, ?, ?)', [
 			messageDataObj.userID,
 			messageDataObj.msg,
         messageDataObj.fileData ?? '',
@@ -37,19 +42,22 @@ class ChatController {
   static async generatePdf(req, res) {
     try {
       const [messages] = await db.execute('SELECT * FROM messages')
+		for (let message of messages) {
+			const [user] = await db.execute('SELECT name FROM users WHERE id = ?', [message.userID])
+			message.userName = user.length > 0 ? user[0].name : 'Unknown'
+		}
       // const pdfCreator = new PdfCreator(
       //   path.join(__dirname, 'views', 'index.ejs'),
       //   { messages }
       // )
       console.log()
-
       // console.log('------ messages')
       // console.log(messages)
 
       await PdfCreator.generatePdf(
         path.join(__dirname, 'public', 'chat.pdf'),
         path.join(__dirname, 'views', 'index.ejs'),
-        { messages, hideTools: true }
+        { messages, hideTools: true, user: req.user }
       )
       res.sendFile(path.join(__dirname, 'public', 'chat.pdf'))
     } catch (err) {

@@ -61,6 +61,22 @@
 		.btn__send{
 			margin-left: 10px;
 		}
+		.btn__send:disabled{
+			background-color: #cccccca8;
+			cursor: not-allowed;
+		}
+		.username-msg {
+			margin: 3px;
+			font-weight: 700;
+		}
+		.user-msg {
+			padding-left: 15px;
+			font-style: italic;
+		}
+		.message {
+			list-style: none; 
+			margin-bottom: 10px
+		}
     </style>
   </head>
   <body>	
@@ -79,11 +95,12 @@
     >
       <ul id="messages">
         <% messages.forEach(function(message) { %>
-        <li>
+        <li class="message">
+			<p class="username-msg"><%= message.userName %></p>
           <% if (message.fileData) { %>
           <img src="<%= message.fileData %>" style="max-width: 80px" />
           <% } %> <% if (message.msg) { %>
-          <span> <%= message.msg %> </span>
+          <span class="user-msg"> <%= message.msg %> </span>
           <% } %>
         </li>
         <% }); %>
@@ -109,7 +126,7 @@
         </form>
 
         <form id="form" action="">
-          <input id="input" autocomplete="off" /><button class="btn btn__send">Send</button>
+          <input id="input" autocomplete="off" /><button id="sendButton" class="btn btn__send">Send</button>
         </form>
       </div>
       <% } %>
@@ -141,11 +158,32 @@
       const savePdfButton = document.getElementById('savePdfButton')
       const emailPdfForm = document.getElementById('emailPdfForm')
       const emailInput = document.getElementById('emailInput')
+		const sendButton = document.getElementById('sendButton')
+		const userId = '<%= user && user.id ? user.id : null%>'
+		const userName = '<%= user && user.name ? user.name : null%>'
+
+		//hint fo the user button
+		sendButton.addEventListener('mouseover', () => {
+			if (!userId) {
+				sendButton.setAttribute('title', 'Please login to send messages.')
+				sendButton.disabled = true	
+			}
+		})
+		sendButton.addEventListener('mouseout', () => {
+			if (!userId) {
+				sendButton.removeAttribute('title')
+				sendButton.disabled = false
+			}
+		})
 
       form.addEventListener('submit', (e) => {
         e.preventDefault()
-        if (input.value) {
-          ws.send(JSON.stringify({ msg: input.value }))
+		  if (!userId) {
+			 alert('Please login to send messages.')
+			 return
+		  }
+        if (input.value && userId) {
+          ws.send(JSON.stringify({ userID: userId, msg: input.value }))
           input.value = ''
         }
       })
@@ -168,6 +206,12 @@
 
       ws.onmessage = (event) => {
         const item = document.createElement('li')
+		  const user = document.createElement('p')
+		  user.className = 'username-msg'
+		  item.className = 'message'
+			
+		  user.textContent = userName
+		  item.append(user)
         const msgData = JSON.parse(event.data)
         if (msgData.fileData) {
           const img = document.createElement('img')
@@ -177,6 +221,7 @@
         }
         if (msgData.msg) {
           const span = document.createElement('span')
+			 span.className = 'user-msg'
           span.textContent = msgData.msg
           item.append(span)
         }

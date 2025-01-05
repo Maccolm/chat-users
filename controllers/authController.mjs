@@ -9,7 +9,7 @@ import config from "../config/default.mjs"
 class AuthController {
 	// ---- автентиікація -----
 	static getLoginPage(req, res) {
-		 return res.render('auth/loginForm', { error: '', login: true })
+		 return res.render('auth/loginForm', { error: '', login: true})
 	}
 	static getSignupPage(req, res) {
 		return res.render('auth/loginForm', { error: '', login: false })
@@ -36,8 +36,7 @@ class AuthController {
 					console.error("Error in login:", err)
 					return next(err)
 				}
-				console.log("User logged in:", req.user);
-				console.log("Session:", req.session);
+				console.log("Session:", req.session)
 		
 				return res.redirect('/')
 			})
@@ -83,8 +82,14 @@ class AuthController {
 	}
 	// ---- вихід -----
 	static logout(req, res) {
-		req.logout();
-		return res.render({ message: "Logged out successfully" });
+		req.logout((err) => {
+			if (err) {
+				console.error("Error in logout:", err)
+				return res.status(500).render('error', { error: "Error in logout" })
+			}
+			 req.session.message = 'Logged out successfully'
+			return res.redirect('/auth/login')
+		})
 	}
 }
 export default AuthController;
