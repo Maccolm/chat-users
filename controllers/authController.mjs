@@ -61,16 +61,17 @@ class AuthController {
 				email: req.body.email,
 				password: hashedPassword,
 			})
-			const token = prepareToken(
-				{
-					id: newUser._id,
-					username: newUser.username,
-				},
-				req.headers
-			)
-			req.session.token = token
 
-			return res.redirect('/')
+			req.login(newUser, (err) => {
+				if (err) {
+					console.error("Error in login:", err)
+					return next(err)
+				}
+				console.log("Session:", req.session)
+		
+				return res.redirect('/')
+			})
+
 		} catch (err) {
 			if(err.code === 'ER_DUP_ENTRY') {
 				console.log('Duplicate email', err.sqlMessage)
