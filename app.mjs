@@ -61,6 +61,6 @@ wss.on('connection', (ws) => {
   })
 })
 
-server.listen(443, () => {
-  console.log('Server is running on port 443')
+server.listen(3000, () => {
+  console.log('Server is running on port 3000')
 })
